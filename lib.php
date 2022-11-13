@@ -149,7 +149,7 @@ class repository_txttoimg extends repository {
      * @return array
      */
     public static function get_type_option_names() {
-        return array_merge(parent::get_type_option_names(), ['images', 'size', 'key', 'user']);
+        return array_merge(parent::get_type_option_names(), ['images', 'size', 'key']);
     }
 
     /**
@@ -170,7 +170,7 @@ class repository_txttoimg extends repository {
         $select->setSelected($size);
 
         $key = get_config('repository_txttoimg', 'key');
-        $mform->addElement('text', 'key', get_string('api', 'repository_txttoimg') . " ("
+        $mform->addElement('password', 'key', get_string('api', 'repository_txttoimg') . " ("
                             . get_string('api_description', 'repository_txttoimg') . ")" , array('size' => '60'));
         $mform->setDefault('key', $key);
         $mform->setType('key', PARAM_RAW_TRIMMED);
@@ -179,9 +179,6 @@ class repository_txttoimg extends repository {
         $select = $mform->addElement('select', 'images', get_string('images', 'repository_txttoimg'), ['1', '2', '3' , '4']);
         $select->setSelected($images);
 
-        $user = get_config('repository_txttoimg', 'user');
-        $select = $mform->addElement('select', 'user', get_string('user', 'repository_txttoimg'), ['Global', 'User']);
-        $select->setSelected($user);
     }
 
     /**

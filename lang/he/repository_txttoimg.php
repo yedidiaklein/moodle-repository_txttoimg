@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = "המרת טקסט למונה על בסיס בינה מלאכותית";
 $string['configplugin'] = "הגדרות המרת טקסט לתמונה";
+$string['txttoimg:view'] = 'השתמשו בהמרת טקסט לתמונה';
 $string['api'] = "OpenAI מפתח API";
 $string['api_description'] = 'מפתח OpenAI API מהאתר <a target="_new" href="https://beta.openai.com/account/api-keys">https://beta.openai.com/account/api-keys</a>';
 $string['search'] = "תארו את התמונה אותה אתם חפצים ליצור";
