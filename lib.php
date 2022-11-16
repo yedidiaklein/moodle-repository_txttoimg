@@ -72,7 +72,7 @@ class repository_txttoimg extends repository {
         }
 
         $key = get_config('txttoimg', 'key');
-        $images = get_config('txttoimg', 'images') + 1;
+        $images = get_config('txttoimg', 'images');
         $size = get_config('txttoimg', 'size');
         switch ($size) {
             case '0':
@@ -176,7 +176,8 @@ class repository_txttoimg extends repository {
         $mform->setType('key', PARAM_RAW_TRIMMED);
 
         $images = get_config('repository_txttoimg', 'images');
-        $select = $mform->addElement('select', 'images', get_string('images', 'repository_txttoimg'), ['1', '2', '3' , '4']);
+        $select = $mform->addElement('select', 'images', get_string('images', 'repository_txttoimg'),
+                                    [1 => '1', 2 => '2', 3 => '3' , 4 => '4']);
         $select->setSelected($images);
 
     }

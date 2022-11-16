@@ -15,17 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Privacy Subsystem implementation for repository_s3.
  *
  * @package   repository_txttoimg
  * @copyright 2022 OpenApp By Yedidia Klein http://openapp.co.il
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace repository_txttoimg\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2022111600;      // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2016052300;      // Requires this Moodle version.
-$plugin->component = 'repository_txttoimg';// Full name of the plugin (used for diagnostics).
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = "0.9 (Build - 2022110501)";
+/**
+ * Privacy Subsystem for repository_txttoimg implementing null_provider.
+ *
+ * @copyright  2022 OpenApp By Yedidia Klein http://openapp.co.il
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
