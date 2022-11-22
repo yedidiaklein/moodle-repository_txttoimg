@@ -74,53 +74,55 @@ class repository_txttoimg extends repository {
         $key = get_config('txttoimg', 'key');
         $images = get_config('txttoimg', 'images');
         $size = get_config('txttoimg', 'size');
-        switch ($size) {
-            case '0':
-                $size = 256;
-                break;
-            case '1':
-                $size = 512;
-                break;
-            case '2':
-                $size = 1024;
-                break;
-            default:
-                $size = 512;
+        $engine = get_config('txttoimg', 'engine');
+
+        if ($engine == 'openai') {
+            $size = $size . 'x' . $size;
+            $url = 'https://api.openai.com/v1/images/generations';
+
+            $authorization = "Authorization: Bearer " . $key;
+
+            $data = "{
+                \"prompt\": \"$q\",
+                \"n\": $images,
+                \"size\": \"$size\"}";
+
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization ));
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+            $result = json_decode(curl_exec($ch));
+            curl_close($ch);
+
+            $arresult = $result->data;
+        } else {
+            // Stable Diffusion.
+            $url = 'http://sd.openapp.co.il';
+            $ch = curl_init($url . '/?prompt=' . urlencode($q) . '&num=' . $images . '&size=' . $size . '&key=' . $key);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $sdresult = json_decode(curl_exec($ch));
+            curl_close($ch);
         }
-        $size = $size . 'x' . $size;
-        $url = 'https://api.openai.com/v1/images/generations';
-
-        $authorization = "Authorization: Bearer " . $key;
-
-        $data = "{
-            \"prompt\": \"$q\",
-            \"n\": $images,
-            \"size\": \"$size\"}";
-
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization ));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        $result = json_decode(curl_exec($ch));
-        curl_close($ch);
-
-        $arresult = $result->data;
-
         for ($imagecounter = 0; $imagecounter < $images; $imagecounter++) {
+            if ($engine == 'openai') {
+                $imageurl = $arresult[$imagecounter]->url;
+            } else {
+                $imageurl = $sdresult[$imagecounter];
+            }
             $title = $q . '-' . $imagecounter . '.jpg';
             $list[] = array(
                     'shorttitle' => $title,
                     'thumbnail_title' => $title,
                     'title' => $title,
                     'description' => $title,
-                    'thumbnail' => $arresult[$imagecounter]->url,
+                    'thumbnail' => $imageurl,
                     'thumbnail_width' => 150,
                     'thumbnail_height' => 100,
                     'size' => 10000,
                     'author' => $USER->firstname . ' ' . $USER->lastname,
-                    'source' => $arresult[$imagecounter]->url,
+                    'source' => $imageurl,
                     'license' => 'public'
             );
 
@@ -149,7 +151,7 @@ class repository_txttoimg extends repository {
      * @return array
      */
     public static function get_type_option_names() {
-        return array_merge(parent::get_type_option_names(), ['images', 'size', 'key']);
+        return array_merge(parent::get_type_option_names(), ['engine', 'images', 'size', 'key']);
     }
 
     /**
@@ -165,8 +167,14 @@ class repository_txttoimg extends repository {
     public static function type_config_form($mform, $classname = 'repository') {
         parent::type_config_form($mform);
 
+        $engine = get_config('repository_txttoimg', 'engine');
+        $engineselect = $mform->addElement('select', 'engine', get_string('engine', 'repository_txttoimg'),
+                                                    ['openai' => 'OpenAI', 'sd' => 'Stable Diffusion']);
+        $engineselect->setSelected($engine);
+
         $size = get_config('repository_txttoimg', 'size');
-        $select = $mform->addElement('select', 'size', get_string('size', 'repository_txttoimg'), ['256', '512', '1024']);
+        $select = $mform->addElement('select', 'size', get_string('size', 'repository_txttoimg'),
+                                                    [256 => '256', 512 => '512', 1024 => '1024']);
         $select->setSelected($size);
 
         $key = get_config('repository_txttoimg', 'key');

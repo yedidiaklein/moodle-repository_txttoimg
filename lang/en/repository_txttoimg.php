@@ -27,10 +27,10 @@
 $string['pluginname'] = "AI Text to Image";
 $string['configplugin'] = "AI Text to Image Repository Settings";
 $string['txttoimg:view'] = 'View AI Text to Image repository';
-$string['api'] = "OpenAI API";
-$string['api_description'] = 'OpenAI API from <a target="_new" href="https://beta.openai.com/account/api-keys">https://beta.openai.com/account/api-keys</a>';
+$string['api'] = "API key";
+$string['api_description'] = 'Stable Diffusion from <a href="mailto:sales@openapp.co.il">sales@openapp.co.il</a><br>Open AI from <a target="_new" href="https://beta.openai.com/account/api-keys">https://beta.openai.com/account/api-keys</a>';
 $string['search'] = "Describe the Image You Wish to Generate";
-$string['warning'] = "API isn't set !! You must set it in AI Text to Image Repository settings.";
-$string['user'] = 'Use a global key or a key from user profile (Future feature not yet implemented)';
+$string['warning'] = "API key isn't set !! Using Demo API key";
+$string['engine'] = 'AI Engine';
 $string['size'] = 'Image Size';
 $string['images'] = 'Number of generated images';

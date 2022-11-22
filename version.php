@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2022111600;      // The current module version (Date: YYYYMMDDXX).
+$plugin->version = 2022112200;      // The current module version (Date: YYYYMMDDXX).
 $plugin->requires = 2016052300;      // Requires this Moodle version.
 $plugin->component = 'repository_txttoimg';// Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = "0.9 (Build - 2022110501)";
+$plugin->release = "1.0";
