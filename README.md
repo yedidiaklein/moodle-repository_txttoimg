@@ -2,9 +2,11 @@
 This a a repository plugin for Moodle, that connect to AI services and generates images from text.
 
 # Supported engines
-Currently this repository plugin supports OpenAI API.
+Currently this repository plugin supports OpenAI API and Stable Diffusion.
 
 You have to generate API key at https://beta.openai.com/account/api-keys
+
+Stable diffusion need to contact me (sales@openapp.co.il) for getting a key for generating non watermarked images.
 
 # Installing plugin
 - Download the plugin and extract/clone it to [moodle_root]/repository/
