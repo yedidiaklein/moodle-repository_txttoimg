@@ -99,7 +99,7 @@ class repository_txttoimg extends repository {
             $arresult = $result->data;
         } else {
             // Stable Diffusion.
-            $url = 'http://sd.openapp.co.il';
+            $url = 'https://sd.openapp.co.il';
             $ch = curl_init($url . '/?prompt=' . urlencode($q) . '&num=' . $images . '&size=' . $size . '&key=' . $key);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             $sdresult = json_decode(curl_exec($ch));
