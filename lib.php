@@ -109,7 +109,7 @@ class repository_txttoimg extends repository {
         $arresult = $result->data;
 
         for ($imagecounter = 0; $imagecounter < $images; $imagecounter++) {
-            $title = $q . '-' . $imagecounter . '.jpg';
+            $title = $q . '-' . $imagecounter . '.png';
             $list[] = array(
                     'shorttitle' => $title,
                     'thumbnail_title' => $title,
