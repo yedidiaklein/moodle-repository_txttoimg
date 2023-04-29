@@ -111,7 +111,7 @@ class repository_txttoimg extends repository {
             } else {
                 $imageurl = $sdresult[$imagecounter];
             }
-            $title = $q . '-' . $imagecounter . '.jpg';
+            $title = $q . '-' . $imagecounter . '.png';
             $list[] = array(
                     'shorttitle' => $title,
                     'thumbnail_title' => $title,
