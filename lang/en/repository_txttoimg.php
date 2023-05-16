@@ -28,7 +28,7 @@ $string['pluginname'] = "AI Text to Image";
 $string['configplugin'] = "AI Text to Image Repository Settings";
 $string['txttoimg:view'] = 'View AI Text to Image repository';
 $string['api'] = "OpenAI API";
-$string['api_description'] = 'OpenAI API from <a target="_new" href="https://beta.openai.com/account/api-keys">https://beta.openai.com/account/api-keys</a>';
+$string['api_description'] = 'OpenAI API from <a target="_new" href="https://platform.openai.com/account/api-keys">https://platform.openai.com/account/api-keys</a>';
 $string['search'] = "Describe the Image You Wish to Generate";
 $string['warning'] = "API isn't set !! You must set it in AI Text to Image Repository settings.";
 $string['user'] = 'Use a global key or a key from user profile (Future feature not yet implemented)';
