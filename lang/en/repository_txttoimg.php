@@ -32,5 +32,10 @@ $string['api_description'] = 'OpenAI API from <a target="_new" href="https://pla
 $string['search'] = "Describe the Image You Wish to Generate";
 $string['warning'] = "API isn't set !! You must set it in AI Text to Image Repository settings.";
 $string['user'] = 'Use a global key or a key from user profile (Future feature not yet implemented)';
-$string['size'] = 'Image Size';
+$string['size'] = 'Image Size (Dall-e 2)';
 $string['images'] = 'Number of generated images';
+$string['sizever3'] = 'Image Size (Dall-e 3)';
+$string['square'] = 'Square';
+$string['portrait'] = 'Portrait';
+$string['landscape'] = 'Landscape';
+$string['version'] = 'Dall-E Version';

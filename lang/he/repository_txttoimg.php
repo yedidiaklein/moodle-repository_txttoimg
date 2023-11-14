@@ -32,5 +32,11 @@ $string['api_description'] = 'מפתח OpenAI API מהאתר <a target="_new" hr
 $string['search'] = "תארו את התמונה אותה אתם חפצים ליצור";
 $string['warning'] = "ה-API אינו מוגדר";
 $string['user'] = 'שימוש במפתח גלובלי או מפרופיל המשתמש (תכונה עתידית שעדיין לא מיושמת)';
-$string['size'] = 'גודל התמונה';
+$string['size'] = 'גודל התמונה (Dall-e 2)';
 $string['images'] = 'מספר התמונות המיוצרות';
+$string['sizever3'] = 'גודל התמונה (Dall-e 3)';
+$string['square'] = 'ריבוע';
+$string['portrait'] = 'לגובה';
+$string['landscape'] = 'לרוחב';
+$string['version'] = 'גירסת Dall-E';
+

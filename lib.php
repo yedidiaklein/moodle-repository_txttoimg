@@ -88,11 +88,42 @@ class repository_txttoimg extends repository {
                 $size = 512;
         }
         $size = $size . 'x' . $size;
+        $model = get_config('txttoimg', 'version');
+        switch ($model) {
+            case '0':
+                $model = 'dall-e-2';
+                break;
+            case '1':
+                $model = 'dall-e-3';
+                break;
+            default:
+                $model = 'dall-e-2';
+        }
+        if ($model == 'dall-e-3') {
+            $sizever3 = get_config('txttoimg', 'sizever3');
+            switch ($sizever3) {
+                case '0':
+                    $size = '1024x1024';
+                    break;
+                case '1':
+                    $size = '1024x1792';
+                    break;
+                case '2':
+                    $size = '1792x1024';
+                    break;
+                default:
+                    $size = '1024x1024';
+            }
+            // Currently Dall-e 3 API force creating one image.
+            $images = 1;
+        }
+
         $url = 'https://api.openai.com/v1/images/generations';
 
         $authorization = "Authorization: Bearer " . $key;
 
         $data = "{
+            \"model\": \"$model\",
             \"prompt\": \"$q\",
             \"n\": $images,
             \"size\": \"$size\"}";
@@ -106,26 +137,40 @@ class repository_txttoimg extends repository {
         $result = json_decode(curl_exec($ch));
         curl_close($ch);
 
-        $arresult = $result->data;
-
-        for ($imagecounter = 0; $imagecounter < $images; $imagecounter++) {
-            $title = $q . '-' . $imagecounter . '.png';
+        if (isset($result->error)) {
+            $title = 'Error.png';
             $list[] = array(
-                    'shorttitle' => $title,
-                    'thumbnail_title' => $title,
-                    'title' => $title,
-                    'description' => $title,
-                    'thumbnail' => $arresult[$imagecounter]->url,
+                    'shorttitle' => 'Error',
+                    'thumbnail_title' => 'Error',
+                    'title' => 'Error',
+                    'description' => 'Error',
+                    'thumbnail' => $CFG->wwwroot . '/repository/txttoimg/pix/error.png',
                     'thumbnail_width' => 150,
                     'thumbnail_height' => 100,
                     'size' => 10000,
                     'author' => $USER->firstname . ' ' . $USER->lastname,
-                    'source' => $arresult[$imagecounter]->url,
+                    'source' => $CFG->wwwroot . '/repository/txttoimg/pix/error.png',
                     'license' => 'public'
             );
-
+        } else {
+            $arresult = $result->data;
+            for ($imagecounter = 0; $imagecounter < $images; $imagecounter++) {
+                $title = $q . '-' . $imagecounter . '.png';
+                $list[] = array(
+                        'shorttitle' => $title,
+                        'thumbnail_title' => $title,
+                        'title' => $title,
+                        'description' => $title,
+                        'thumbnail' => $arresult[$imagecounter]->url,
+                        'thumbnail_width' => 150,
+                        'thumbnail_height' => 100,
+                        'size' => 10000,
+                        'author' => $USER->firstname . ' ' . $USER->lastname,
+                        'source' => $arresult[$imagecounter]->url,
+                        'license' => 'public'
+                );
+            }
         }
-
         $ret  = array();
         $ret['nologin'] = false;
         $ret['page'] = (int)$page;
@@ -149,7 +194,7 @@ class repository_txttoimg extends repository {
      * @return array
      */
     public static function get_type_option_names() {
-        return array_merge(parent::get_type_option_names(), ['images', 'size', 'key']);
+        return array_merge(parent::get_type_option_names(), ['images', 'size', 'key', 'version', 'sizever3']);
     }
 
     /**
@@ -165,9 +210,23 @@ class repository_txttoimg extends repository {
     public static function type_config_form($mform, $classname = 'repository') {
         parent::type_config_form($mform);
 
+        $version = get_config('repository_txttoimg', 'version');
+        $select = $mform->addElement('select', 'version', get_string('version', 'repository_txttoimg'),
+            [ 'Dall-e 2',
+              'Dall-e 3' ]);
+        $select->setSelected($version);
+
         $size = get_config('repository_txttoimg', 'size');
         $select = $mform->addElement('select', 'size', get_string('size', 'repository_txttoimg'), ['256', '512', '1024']);
         $select->setSelected($size);
+
+        $size = get_config('repository_txttoimg', 'sizever3');
+        // On Dall-e 3 the sizes are 1024x1024, 1024x1792 or 1792x1024.
+        $select = $mform->addElement('select', 'sizever3', get_string('sizever3', 'repository_txttoimg'),
+            [ get_string('square', 'repository_txttoimg'),
+              get_string('portrait', 'repository_txttoimg'),
+              get_string('landscape', 'repository_txttoimg') ]);
+        $select->setSelected($sizever3);
 
         $key = get_config('repository_txttoimg', 'key');
         $mform->addElement('password', 'key', get_string('api', 'repository_txttoimg') . " ("
