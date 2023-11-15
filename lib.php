@@ -169,7 +169,7 @@ class repository_txttoimg extends repository {
                           ];
             }
         }
-        $ret  = array();
+        $ret  = [];
         $ret['nologin'] = false;
         $ret['page'] = (int)$page;
         if ($ret['page'] < 1) {
@@ -228,7 +228,7 @@ class repository_txttoimg extends repository {
 
         $key = get_config('repository_txttoimg', 'key');
         $mform->addElement('password', 'key', get_string('api', 'repository_txttoimg') . " ("
-                            . get_string('api_description', 'repository_txttoimg') . ")" , array('size' => '60'));
+                            . get_string('api_description', 'repository_txttoimg') . ")" , ['size' => '60']);
         $mform->setDefault('key', $key);
         $mform->setType('key', PARAM_RAW_TRIMMED);
 
@@ -272,7 +272,7 @@ class repository_txttoimg extends repository {
         $search->name = 's';
         $search->label = $warning . get_string('search', 'repository_txttoimg').': ';
 
-        $ret['login'] = array($search);
+        $ret['login'] = [$search];
         $ret['login_btn_label'] = get_string('search');
         $ret['login_btn_action'] = 'search';
         $ret['allowcaching'] = true; // Indicates that login form can be cached in filepicker.js.
