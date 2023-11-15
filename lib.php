@@ -140,10 +140,10 @@ class repository_txttoimg extends repository {
         if (isset($result->error)) {
             $title = 'Error.png';
             $list[] = array(
-                    'shorttitle' => 'Error',
-                    'thumbnail_title' => 'Error',
-                    'title' => 'Error',
-                    'description' => 'Error',
+                    'shorttitle' => $result->error->code,
+                    'thumbnail_title' => $result->error->message,
+                    'title' => $result->error->code,
+                    'description' => $result->error->message,
                     'thumbnail' => $CFG->wwwroot . '/repository/txttoimg/pix/error.png',
                     'thumbnail_width' => 150,
                     'thumbnail_height' => 100,
