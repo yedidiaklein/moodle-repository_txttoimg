@@ -24,8 +24,6 @@
 
 namespace repository_txttoimg\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for repository_txttoimg implementing null_provider.
  *

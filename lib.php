@@ -45,7 +45,7 @@ class repository_txttoimg extends repository {
      * @return array
      */
     public function get_listing($path = '', $page = '') {
-        return array('list' => array());
+        return ['list' => []];
     }
 
     /**
@@ -129,7 +129,7 @@ class repository_txttoimg extends repository {
             \"size\": \"$size\"}";
 
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization ));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json' , $authorization ]);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
@@ -139,36 +139,34 @@ class repository_txttoimg extends repository {
 
         if (isset($result->error)) {
             $title = 'Error.png';
-            $list[] = array(
-                    'shorttitle' => $result->error->code,
-                    'thumbnail_title' => $result->error->message,
-                    'title' => $result->error->code,
-                    'description' => $result->error->message,
-                    'thumbnail' => $CFG->wwwroot . '/repository/txttoimg/pix/error.png',
-                    'thumbnail_width' => 150,
-                    'thumbnail_height' => 100,
-                    'size' => 10000,
-                    'author' => $USER->firstname . ' ' . $USER->lastname,
-                    'source' => $CFG->wwwroot . '/repository/txttoimg/pix/error.png',
-                    'license' => 'public'
-            );
-        } else {
-            $arresult = $result->data;
-            for ($imagecounter = 0; $imagecounter < $images; $imagecounter++) {
-                $title = $q . '-' . $imagecounter . '.png';
-                $list[] = array(
-                        'shorttitle' => $title,
-                        'thumbnail_title' => $title,
-                        'title' => $title,
-                        'description' => $title,
-                        'thumbnail' => $arresult[$imagecounter]->url,
+            $list[] = [ 'shorttitle' => $result->error->code,
+                        'thumbnail_title' => $result->error->message,
+                        'title' => $result->error->code,
+                        'description' => $result->error->message,
+                        'thumbnail' => $CFG->wwwroot . '/repository/txttoimg/pix/error.png',
                         'thumbnail_width' => 150,
                         'thumbnail_height' => 100,
                         'size' => 10000,
                         'author' => $USER->firstname . ' ' . $USER->lastname,
-                        'source' => $arresult[$imagecounter]->url,
-                        'license' => 'public'
-                );
+                        'source' => $CFG->wwwroot . '/repository/txttoimg/pix/error.png',
+                        'license' => 'public',
+                      ];
+        } else {
+            $arresult = $result->data;
+            for ($imagecounter = 0; $imagecounter < $images; $imagecounter++) {
+                $title = $q . '-' . $imagecounter . '.png';
+                $list[] = [ 'shorttitle' => $title,
+                            'thumbnail_title' => $title,
+                            'title' => $title,
+                            'description' => $title,
+                            'thumbnail' => $arresult[$imagecounter]->url,
+                            'thumbnail_width' => 150,
+                            'thumbnail_height' => 100,
+                            'size' => 10000,
+                            'author' => $USER->firstname . ' ' . $USER->lastname,
+                            'source' => $arresult[$imagecounter]->url,
+                            'license' => 'public',
+                          ];
             }
         }
         $ret  = array();
@@ -213,7 +211,7 @@ class repository_txttoimg extends repository {
         $version = get_config('repository_txttoimg', 'version');
         $select = $mform->addElement('select', 'version', get_string('version', 'repository_txttoimg'),
             [ 'Dall-e 2',
-              'Dall-e 3' ]);
+              'Dall-e 3', ]);
         $select->setSelected($version);
 
         $size = get_config('repository_txttoimg', 'size');
@@ -225,7 +223,7 @@ class repository_txttoimg extends repository {
         $select = $mform->addElement('select', 'sizever3', get_string('sizever3', 'repository_txttoimg'),
             [ get_string('square', 'repository_txttoimg'),
               get_string('portrait', 'repository_txttoimg'),
-              get_string('landscape', 'repository_txttoimg') ]);
+              get_string('landscape', 'repository_txttoimg'), ]);
         $select->setSelected($sizever3);
 
         $key = get_config('repository_txttoimg', 'key');
@@ -261,7 +259,7 @@ class repository_txttoimg extends repository {
      * @return array
      */
     public function print_login($ajax = true) {
-        $ret = array();
+        $ret = [];
         $check = get_config('txttoimg', 'key');
         if (trim($check) == "") {
             $warning = "<p class='errorbox'>" . get_string('warning', 'repository_txttoimg') . "</p>";

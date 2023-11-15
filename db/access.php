@@ -30,13 +30,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-
-    'repository/txttoimg:view' => array(
+$capabilities = [
+    'repository/txttoimg:view' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        )
-    )
-);
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+];
