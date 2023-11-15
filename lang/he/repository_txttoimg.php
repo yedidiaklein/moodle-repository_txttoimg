@@ -34,6 +34,7 @@ $string['warning'] = "ה-API אינו מוגדר";
 $string['user'] = 'שימוש במפתח גלובלי או מפרופיל המשתמש (תכונה עתידית שעדיין לא מיושמת)';
 $string['size'] = 'גודל התמונה (Dall-e 2)';
 $string['images'] = 'מספר התמונות המיוצרות';
+$string['images_description'] = 'שימו לב ש-Dall-E 3 מוגבל לתמונה אחת לבקשה';
 $string['sizever3'] = 'גודל התמונה (Dall-e 3)';
 $string['square'] = 'ריבוע';
 $string['portrait'] = 'לגובה';

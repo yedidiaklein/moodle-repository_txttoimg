@@ -34,6 +34,7 @@ $string['warning'] = "API isn't set !! You must set it in AI Text to Image Repos
 $string['user'] = 'Use a global key or a key from user profile (Future feature not yet implemented)';
 $string['size'] = 'Image Size (Dall-e 2)';
 $string['images'] = 'Number of generated images';
+$string['images_description'] = 'Note that Dall-E 3 is limited to 1 image per request';
 $string['sizever3'] = 'Image Size (Dall-e 3)';
 $string['square'] = 'Square';
 $string['portrait'] = 'Portrait';
