@@ -40,4 +40,6 @@ $string['square'] = 'ריבוע';
 $string['portrait'] = 'לגובה';
 $string['landscape'] = 'לרוחב';
 $string['version'] = 'גירסת Dall-E';
+$string['key_is_from_moodle_providers'] = 'שימו לב : נדרש להגדיר ספק AI Openai או Azure בהגדרות המערכת';
+$string['aisettings'] = 'הגדרות AI';
 

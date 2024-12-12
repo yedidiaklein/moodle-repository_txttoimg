@@ -71,7 +71,11 @@ class repository_txttoimg extends repository {
             $page = 1;
         }
 
-        $key = get_config('txttoimg', 'key');
+        // Get the API key from the settings of Moodle AI provider.
+        $key = get_config('aiprovider_openai', 'apikey');
+        if (trim($key) == "") {
+            $key = get_config('aiprovider_azureai', 'apikey');
+        }
         $images = get_config('txttoimg', 'images');
         $size = get_config('txttoimg', 'size');
         switch ($size) {
@@ -208,6 +212,12 @@ class repository_txttoimg extends repository {
     public static function type_config_form($mform, $classname = 'repository') {
         parent::type_config_form($mform);
 
+        $mform->addElement('html', '<div class="alert alert-info">' .
+            get_string('key_is_from_moodle_providers', 'repository_txttoimg') .
+            ' (<a href="settings.php?section=aiprovider" target=_blank>' .
+            get_string('aisettings', 'repository_txttoimg') .
+            '</a>)' . '</div>');
+
         $version = get_config('repository_txttoimg', 'version');
         $select = $mform->addElement('select', 'version', get_string('version', 'repository_txttoimg'),
             [ 'Dall-e 2',
@@ -218,19 +228,13 @@ class repository_txttoimg extends repository {
         $select = $mform->addElement('select', 'size', get_string('size', 'repository_txttoimg'), ['256', '512', '1024']);
         $select->setSelected($size);
 
-        $size = get_config('repository_txttoimg', 'sizever3');
+        $sizever3 = get_config('repository_txttoimg', 'sizever3');
         // On Dall-e 3 the sizes are 1024x1024, 1024x1792 or 1792x1024.
         $select = $mform->addElement('select', 'sizever3', get_string('sizever3', 'repository_txttoimg'),
             [ get_string('square', 'repository_txttoimg'),
               get_string('portrait', 'repository_txttoimg'),
               get_string('landscape', 'repository_txttoimg'), ]);
         $select->setSelected($sizever3);
-
-        $key = get_config('repository_txttoimg', 'key');
-        $mform->addElement('password', 'key', get_string('api', 'repository_txttoimg') . " ("
-                            . get_string('api_description', 'repository_txttoimg') . ")" , ['size' => '60']);
-        $mform->setDefault('key', $key);
-        $mform->setType('key', PARAM_RAW_TRIMMED);
 
         $images = get_config('repository_txttoimg', 'images');
         $select = $mform->addElement('select', 'images', get_string('images', 'repository_txttoimg') .
@@ -260,7 +264,12 @@ class repository_txttoimg extends repository {
      */
     public function print_login($ajax = true) {
         $ret = [];
-        $check = get_config('txttoimg', 'key');
+
+        $check = get_config('aiprovider_openai', 'apikey');
+        if (trim($check) == "") {
+            $check = get_config('aiprovider_azureai', 'apikey');
+        }
+
         if (trim($check) == "") {
             $warning = "<p class='errorbox'>" . get_string('warning', 'repository_txttoimg') . "</p>";
         } else {

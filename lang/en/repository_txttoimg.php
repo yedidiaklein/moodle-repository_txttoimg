@@ -40,3 +40,5 @@ $string['square'] = 'Square';
 $string['portrait'] = 'Portrait';
 $string['landscape'] = 'Landscape';
 $string['version'] = 'Dall-E Version';
+$string['key_is_from_moodle_providers'] = 'Note : Key has to be set in Moodle AI Openai or Azure providers';
+$string['aisettings'] = 'AI Settings';
