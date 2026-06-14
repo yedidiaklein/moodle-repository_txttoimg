@@ -86,7 +86,8 @@ class repository_txttoimg extends repository {
             return $ret;
         }
 
-        if (!\core_ai\manager::is_action_available(\core_ai\aiactions\generate_image::class)) {
+        $manager = \core\di::get(\core_ai\manager::class);
+        if (!$manager->is_action_available(\core_ai\aiactions\generate_image::class)) {
             $title = 'Error.png';
             $message = get_string('warning', 'repository_txttoimg');
             $list[] = [ 'shorttitle' => $title,
@@ -114,7 +115,6 @@ class repository_txttoimg extends repository {
                     style: 'natural',
                 );
 
-                $manager = \core\di::get(\core_ai\manager::class);
                 $response = $manager->process_action($action);
 
                 if ($response->get_success()) {
@@ -236,7 +236,8 @@ class repository_txttoimg extends repository {
     public function print_login($ajax = true) {
         $ret = [];
 
-        if (!\core_ai\manager::is_action_available(\core_ai\aiactions\generate_image::class)) {
+        $manager = \core\di::get(\core_ai\manager::class);
+        if (!$manager->is_action_available(\core_ai\aiactions\generate_image::class)) {
             $warning = "<p class='errorbox'>" . get_string('warning', 'repository_txttoimg') . "</p>";
         } else {
             $warning = "";
