@@ -24,22 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = "המרת טקסט למונה על בסיס בינה מלאכותית";
+$string['aisettings'] = 'הגדרת ספקים: ניהול אתר > תוספים > AI > ספקים.';
 $string['configplugin'] = "הגדרות המרת טקסט לתמונה";
-$string['txttoimg:view'] = 'השתמשו בהמרת טקסט לתמונה';
-$string['api'] = "OpenAI מפתח API";
-$string['api_description'] = 'מפתח OpenAI API מהאתר <a target="_new" href="https://platform.openai.com/account/api-keys">https://platform.openai.com/account/api-keys</a>';
+$string['pluginname'] = "המרת טקסט לתמונה על בסיס בינה מלאכותית";
 $string['search'] = "תארו את התמונה אותה אתם חפצים ליצור";
-$string['warning'] = "ה-API אינו מוגדר";
-$string['user'] = 'שימוש במפתח גלובלי או מפרופיל המשתמש (תכונה עתידית שעדיין לא מיושמת)';
-$string['size'] = 'גודל התמונה (Dall-e 2)';
-$string['images'] = 'מספר התמונות המיוצרות';
-$string['images_description'] = 'שימו לב ש-Dall-E 3 מוגבל לתמונה אחת לבקשה';
-$string['sizever3'] = 'גודל התמונה (Dall-e 3)';
-$string['square'] = 'ריבוע';
-$string['portrait'] = 'לגובה';
-$string['landscape'] = 'לרוחב';
-$string['version'] = 'גירסת Dall-E';
-$string['key_is_from_moodle_providers'] = 'שימו לב : נדרש להגדיר ספק AI Openai או Azure בהגדרות המערכת';
-$string['aisettings'] = 'הגדרות AI';
+$string['txttoimg:view'] = 'השתמשו בהמרת טקסט לתמונה';
+$string['warning'] = 'יצירת תמונות AI אינה זמינה. יש להפעיל ולהגדיר לפחות ספק AI אחד במודל שתומך ביצירת תמונות.';
+
+
 

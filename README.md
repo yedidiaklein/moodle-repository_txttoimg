@@ -1,10 +1,17 @@
 # moodle-repository_txttoimg
-This a a repository plugin for Moodle, that connect to AI services and generates images from text.
+This is a repository plugin for Moodle that generates images from text using Moodle's internal AI subsystem.
+
+This plugin is not limited to the rich text editor. Because it is a repository, it is available anywhere Moodle uses the file picker.
+
+Examples include:
+- Course image files in course settings.
+- Activity or resource images when the file picker is available.
+- Any other Moodle form field that supports repository-based file selection.
 
 # Supported engines
-Currently this repository plugin supports OpenAI API.
+This repository uses Moodle AI providers configured at site level (for example OpenAI, Azure AI, or other providers supporting image generation).
 
-You have to generate API key at https://beta.openai.com/account/api-keys
+Provider credentials and model details are managed in Moodle AI provider settings.
 
 # Installing plugin
 - Download the plugin and extract/clone it to [moodle_root]/repository/
@@ -12,13 +19,14 @@ You have to generate API key at https://beta.openai.com/account/api-keys
 - Go to Admin -> Plugins -> Repository then enable and setup the repo.
 
 # Configuring repository
-- In repository settings you should set the desired image size, your OpenAI key and number of images.
-- Image size is the size in pixels of generated images, could be 256x256, 512x512 or 1024x1024.
-- You can get the key on this web address : https://beta.openai.com/account/api-keys
-- You have to sign in or log in, and set your payment info for having access to text to image API.
-- Number of image set the number of images that you get from the AI engine, if you choose more than one you will have to choose one of 2-4 generated images.
+- Enable and configure at least one AI provider in Moodle: Site administration -> Plugins -> AI -> Providers. (including image generation model and settings)
+- Enable this repository in Site administration -> Plugins -> Repositories.
+- This repository no longer stores provider keys, model versions, or model parameters.
+- The repository sends generation requests through Moodle core AI actions.
 
 # Using
-- This repo will now be on your file picker.
+- This repository appears in Moodle file picker locations.
+- You can generate an AI image and insert/select it from those locations.
+- This means it works beyond the rich text editor, for example when setting a course image.
 
 Enjoy !

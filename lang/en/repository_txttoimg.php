@@ -24,21 +24,9 @@
 
  defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = "AI Text to Image";
+$string['aisettings'] = 'Configure providers in Site administration > Plugins > AI > Providers.';
 $string['configplugin'] = "AI Text to Image Repository Settings";
-$string['txttoimg:view'] = 'View AI Text to Image repository';
-$string['api'] = "OpenAI API";
-$string['api_description'] = 'OpenAI API from <a target="_new" href="https://platform.openai.com/account/api-keys">https://platform.openai.com/account/api-keys</a>';
+$string['pluginname'] = "AI Text to Image";
 $string['search'] = "Describe the Image You Wish to Generate";
-$string['warning'] = "API isn't set !! You must set it in AI Text to Image Repository settings.";
-$string['user'] = 'Use a global key or a key from user profile (Future feature not yet implemented)';
-$string['size'] = 'Image Size (Dall-e 2)';
-$string['images'] = 'Number of generated images';
-$string['images_description'] = 'Note that Dall-E 3 is limited to 1 image per request';
-$string['sizever3'] = 'Image Size (Dall-e 3)';
-$string['square'] = 'Square';
-$string['portrait'] = 'Portrait';
-$string['landscape'] = 'Landscape';
-$string['version'] = 'Dall-E Version';
-$string['key_is_from_moodle_providers'] = 'Note : Key has to be set in Moodle AI Openai or Azure providers';
-$string['aisettings'] = 'AI Settings';
+$string['txttoimg:view'] = 'View AI Text to Image repository';
+$string['warning'] = 'AI image generation is not available. Enable and configure at least one Moodle AI provider with image generation support.';

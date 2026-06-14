@@ -59,7 +59,8 @@ class repository_txttoimg extends repository {
      */
     public function search($searchtext, $page = 0) {
         global $SESSION, $CFG, $USER;
-        $perpage = 10;
+
+        $list = [];
 
         if (($searchtext == "") && (isset($SESSION->txttoimgsearch))) {
             $q = $SESSION->txttoimgsearch;
@@ -71,82 +72,27 @@ class repository_txttoimg extends repository {
             $page = 1;
         }
 
-        // Get the API key from the settings of Moodle AI provider.
-        $key = get_config('aiprovider_openai', 'apikey');
-        if (trim($key) == "") {
-            $key = get_config('aiprovider_azureai', 'apikey');
-        }
-        $images = get_config('txttoimg', 'images');
-        $size = get_config('txttoimg', 'size');
-        switch ($size) {
-            case '0':
-                $size = 256;
-                break;
-            case '1':
-                $size = 512;
-                break;
-            case '2':
-                $size = 1024;
-                break;
-            default:
-                $size = 512;
-        }
-        $size = $size . 'x' . $size;
-        $model = get_config('txttoimg', 'version');
-        switch ($model) {
-            case '0':
-                $model = 'dall-e-2';
-                break;
-            case '1':
-                $model = 'dall-e-3';
-                break;
-            default:
-                $model = 'dall-e-2';
-        }
-        if ($model == 'dall-e-3') {
-            $sizever3 = get_config('txttoimg', 'sizever3');
-            switch ($sizever3) {
-                case '0':
-                    $size = '1024x1024';
-                    break;
-                case '1':
-                    $size = '1024x1792';
-                    break;
-                case '2':
-                    $size = '1792x1024';
-                    break;
-                default:
-                    $size = '1024x1024';
+        if (trim($q) === '') {
+            $ret = [];
+            $ret['nologin'] = false;
+            $ret['page'] = (int)$page;
+            if ($ret['page'] < 1) {
+                $ret['page'] = 1;
             }
-            // Currently Dall-e 3 API force creating one image.
-            $images = 1;
+            $ret['list'] = [];
+            $ret['norefresh'] = true;
+            $ret['nosearch'] = false;
+            $ret['pages'] = $ret['page'];
+            return $ret;
         }
 
-        $url = 'https://api.openai.com/v1/images/generations';
-
-        $authorization = "Authorization: Bearer " . $key;
-
-        $data = "{
-            \"model\": \"$model\",
-            \"prompt\": \"$q\",
-            \"n\": $images,
-            \"size\": \"$size\"}";
-
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json' , $authorization ]);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        $result = json_decode(curl_exec($ch));
-        curl_close($ch);
-
-        if (isset($result->error)) {
+        if (!\core_ai\manager::is_action_available(\core_ai\aiactions\generate_image::class)) {
             $title = 'Error.png';
-            $list[] = [ 'shorttitle' => $result->error->code,
-                        'thumbnail_title' => $result->error->message,
-                        'title' => $result->error->code,
-                        'description' => $result->error->message,
+            $message = get_string('warning', 'repository_txttoimg');
+            $list[] = [ 'shorttitle' => $title,
+                        'thumbnail_title' => $message,
+                        'title' => $title,
+                        'description' => $message,
                         'thumbnail' => $CFG->wwwroot . '/repository/txttoimg/pix/error.png',
                         'thumbnail_width' => 150,
                         'thumbnail_height' => 100,
@@ -156,19 +102,82 @@ class repository_txttoimg extends repository {
                         'license' => 'public',
                       ];
         } else {
-            $arresult = $result->data;
-            for ($imagecounter = 0; $imagecounter < $images; $imagecounter++) {
-                $title = $q . '-' . $imagecounter . '.png';
+            try {
+                $contextid = $this->context->id;
+                $action = new \core_ai\aiactions\generate_image(
+                    contextid: $contextid,
+                    userid: $USER->id,
+                    prompttext: $q,
+                    quality: 'standard',
+                    aspectratio: 'square',
+                    numimages: 1,
+                    style: 'natural',
+                );
+
+                $manager = \core\di::get(\core_ai\manager::class);
+                $response = $manager->process_action($action);
+
+                if ($response->get_success()) {
+                    $draftfile = $response->get_response_data()['draftfile'];
+                    $drafturl = \moodle_url::make_draftfile_url(
+                        $draftfile->get_itemid(),
+                        $draftfile->get_filepath(),
+                        $draftfile->get_filename(),
+                        false,
+                    )->out(false);
+                    $source = base64_encode(json_encode([
+                        'contextid' => $draftfile->get_contextid(),
+                        'component' => $draftfile->get_component(),
+                        'filearea' => $draftfile->get_filearea(),
+                        'itemid' => $draftfile->get_itemid(),
+                        'filepath' => $draftfile->get_filepath(),
+                        'filename' => $draftfile->get_filename(),
+                    ]));
+
+                    $title = $q . '.png';
+                    $list[] = [ 'shorttitle' => $title,
+                                'thumbnail_title' => $title,
+                                'title' => $title,
+                                'description' => $title,
+                                'thumbnail' => $drafturl,
+                                'thumbnail_width' => 150,
+                                'thumbnail_height' => 100,
+                                'size' => 10000,
+                                'author' => $USER->firstname . ' ' . $USER->lastname,
+                                                                'source' => $source,
+                                'license' => 'public',
+                              ];
+                } else {
+                    $title = 'Error.png';
+                    $description = (string)$response->get_errormessage();
+                    if ($description === '') {
+                        $description = get_string('warning', 'repository_txttoimg');
+                    }
+                    $list[] = [ 'shorttitle' => $title,
+                                'thumbnail_title' => $description,
+                                'title' => $title,
+                                'description' => $description,
+                                'thumbnail' => $CFG->wwwroot . '/repository/txttoimg/pix/error.png',
+                                'thumbnail_width' => 150,
+                                'thumbnail_height' => 100,
+                                'size' => 10000,
+                                'author' => $USER->firstname . ' ' . $USER->lastname,
+                                'source' => $CFG->wwwroot . '/repository/txttoimg/pix/error.png',
+                                'license' => 'public',
+                              ];
+                }
+            } catch (\Throwable $e) {
+                $title = 'Error.png';
                 $list[] = [ 'shorttitle' => $title,
-                            'thumbnail_title' => $title,
+                            'thumbnail_title' => $e->getMessage(),
                             'title' => $title,
-                            'description' => $title,
-                            'thumbnail' => $arresult[$imagecounter]->url,
+                            'description' => $e->getMessage(),
+                            'thumbnail' => $CFG->wwwroot . '/repository/txttoimg/pix/error.png',
                             'thumbnail_width' => 150,
                             'thumbnail_height' => 100,
                             'size' => 10000,
                             'author' => $USER->firstname . ' ' . $USER->lastname,
-                            'source' => $arresult[$imagecounter]->url,
+                            'source' => $CFG->wwwroot . '/repository/txttoimg/pix/error.png',
                             'license' => 'public',
                           ];
             }
@@ -179,7 +188,6 @@ class repository_txttoimg extends repository {
         if ($ret['page'] < 1) {
             $ret['page'] = 1;
         }
-        $start = 1;
         $max = 10;
         $ret['list'] = $list;
         $ret['norefresh'] = true;
@@ -187,16 +195,6 @@ class repository_txttoimg extends repository {
         // If the number of results is smaller than $max, it means we reached the last page.
         $ret['pages'] = (count($ret['list']) < $max) ? $ret['page'] : -1;
         return $ret;
-    }
-
-    /**
-     * get type option name function
-     *
-     * This function is for module settings.
-     * @return array
-     */
-    public static function get_type_option_names() {
-        return array_merge(parent::get_type_option_names(), ['images', 'size', 'key', 'version', 'sizever3']);
     }
 
     /**
@@ -213,35 +211,8 @@ class repository_txttoimg extends repository {
         parent::type_config_form($mform);
 
         $mform->addElement('html', '<div class="alert alert-info">' .
-            get_string('key_is_from_moodle_providers', 'repository_txttoimg') .
-            ' (<a href="settings.php?section=aiprovider" target=_blank>' .
             get_string('aisettings', 'repository_txttoimg') .
-            '</a>)' . '</div>');
-
-        $version = get_config('repository_txttoimg', 'version');
-        $select = $mform->addElement('select', 'version', get_string('version', 'repository_txttoimg'),
-            [ 'Dall-e 2',
-              'Dall-e 3', ]);
-        $select->setSelected($version);
-
-        $size = get_config('repository_txttoimg', 'size');
-        $select = $mform->addElement('select', 'size', get_string('size', 'repository_txttoimg'), ['256', '512', '1024']);
-        $select->setSelected($size);
-
-        $sizever3 = get_config('repository_txttoimg', 'sizever3');
-        // On Dall-e 3 the sizes are 1024x1024, 1024x1792 or 1792x1024.
-        $select = $mform->addElement('select', 'sizever3', get_string('sizever3', 'repository_txttoimg'),
-            [ get_string('square', 'repository_txttoimg'),
-              get_string('portrait', 'repository_txttoimg'),
-              get_string('landscape', 'repository_txttoimg'), ]);
-        $select->setSelected($sizever3);
-
-        $images = get_config('repository_txttoimg', 'images');
-        $select = $mform->addElement('select', 'images', get_string('images', 'repository_txttoimg') .
-                    " (" . get_string('images_description', 'repository_txttoimg') . ")",
-                    [1 => '1', 2 => '2', 3 => '3' , 4 => '4']);
-        $select->setSelected($images);
-
+            '</div>');
     }
 
     /**
@@ -265,12 +236,7 @@ class repository_txttoimg extends repository {
     public function print_login($ajax = true) {
         $ret = [];
 
-        $check = get_config('aiprovider_openai', 'apikey');
-        if (trim($check) == "") {
-            $check = get_config('aiprovider_azureai', 'apikey');
-        }
-
-        if (trim($check) == "") {
+        if (!\core_ai\manager::is_action_available(\core_ai\aiactions\generate_image::class)) {
             $warning = "<p class='errorbox'>" . get_string('warning', 'repository_txttoimg') . "</p>";
         } else {
             $warning = "";
@@ -284,8 +250,17 @@ class repository_txttoimg extends repository {
         $ret['login'] = [$search];
         $ret['login_btn_label'] = get_string('search');
         $ret['login_btn_action'] = 'search';
-        $ret['allowcaching'] = true; // Indicates that login form can be cached in filepicker.js.
+        $ret['allowcaching'] = false; // Avoid stale cached form fields when options change.
         return $ret;
+    }
+
+    /**
+     * Does this repository browse Moodle-managed files?
+     *
+     * @return bool
+     */
+    public function has_moodle_files() {
+        return true;
     }
 
     /**
